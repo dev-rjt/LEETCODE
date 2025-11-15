@@ -1,27 +1,35 @@
 class Solution {
 public:
 
-    int solve(int i,vector <int> &days,vector <int> &costs,vector <int> &dp) {
-        if(i>days.size()-1) return 0;
 
-        if(dp[i]!=-1) return dp[i];
+    int solve(int n,vector<int> days,vector <int> costs,int pos,vector<int> &dp){
+        if(pos>=n) return 0;
+        if(pos==n-1) return min(costs[0],min(costs[1],costs[2]));
 
-        int one  = solve(i+1,days,costs,dp)+costs[0];
+        if(dp[pos]!=-1) return dp[pos];
 
-        int j = i;
-        while(j<days.size() && days[j]<days[i]+7) j++;
-        int seven = solve(j,days,costs,dp) + costs[1];
-        
-        int k = i;
-        while(k<days.size() && days[k]<days[i]+30) k++;
-        int thirty = solve(k,days,costs,dp) + costs[2];
+        int a = INT_MAX;
+        a = solve(n,days,costs,pos+1,dp) + costs[0];
 
-        int ans = min(one,min(seven,thirty));
-        dp[i] = ans;
-        return dp[i];
+        int b = INT_MAX;
+        int j = pos;
+        while(j<n && days[j]-days[pos]<7) j++;
+        b = solve(n,days,costs,j,dp) + costs[1];
+
+        int c = INT_MAX;
+        j = pos;
+        while(j<n && days[j]-days[pos]<30) j++;
+        c = solve(n,days,costs,j,dp) + costs[2];
+
+        int ans = min(a,min(b,c));
+        dp[pos] = ans;
+        return ans;
+
     }
+
     int mincostTickets(vector<int>& days, vector<int>& costs) {
-        vector <int> dp(days.size()+1,-1);
-        return solve(0,days,costs,dp);
+        int n = days.size();
+        vector <int> dp(n,-1);
+        return solve(n,days,costs,0,dp);
     }
 };
