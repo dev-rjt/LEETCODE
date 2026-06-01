@@ -1,36 +1,52 @@
 class Solution {
 public:
 
-    void solve(int n,int r,vector<int>&col,vector<int> &d1,vector<int>&d2, vector<string> &board,vector<vector<string>> &ans){
-        if(r==n){
-            ans.push_back(board);
+    void solve(int n,int i,vector<pair<int,int>> &res,vector<vector<pair<int,   int>>> &ans){
+
+        // base case
+        if(i==n){
+            ans.push_back(res);
             return;
         }
 
-        for(int c=0;c<n;c++) {
-            if(col[c]||d1[r+c]||d2[n-c+r-1]) continue;
+        for(int j=0;j<n;j++){
+            bool possible = true;
 
-            col[c]=1;d1[r+c]=1;d2[n-c+r-1]=1;
-            board[r][c] = 'Q';
+            for(auto it: res){
+                int a  = it.first;
+                int b = it.second;
 
-            solve(n,r+1,col,d1,d2,board,ans);
+                if(i==a || j==b || i-j == a-b || i+j==a+b ){
+                    possible = false;
+                    break;
+                }
+            }
 
-            board[r][c] = '.';
-
-            col[c]=0;d1[r+c]=0;d2[n-c+r-1]=0;
+            if(possible){
+                res.push_back({i,j});
+                solve(n,i+1,res,ans);
+                res.pop_back();
+            }
         }
     }
-
     vector<vector<string>> solveNQueens(int n) {
-        vector<string> board(n,string(n,'.'));
-        vector<vector<string>> ans;
+        vector<pair<int,int>> res;
+        vector<vector<pair<int,int>>> ans;
 
-        vector<int> col(n,0);
-        vector<int> d1(2*n,0);
-        vector<int> d2(2*n,0);
+        solve(n,0,res,ans);
 
-       solve(n,0,col,d1,d2,board,ans);
+        vector<vector<string>> ret;
 
-       return ans;
+        for(auto it:ans){
+            vector<string> temp(n,string(n,'.'));
+
+            for(auto i:it){
+                temp[i.first][i.second] = 'Q';
+            }
+
+            ret.push_back(temp);
+        }
+
+        return ret;
     }
 };
