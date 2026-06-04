@@ -6,9 +6,9 @@
  * };
  */
 struct ListNode* reverseList(struct ListNode* head) {
-    struct ListNode *prev = NULL,*curr=head,*upcoming=NULL;
+    struct ListNode *prev = NULL,*curr = head,*upcoming=NULL;
 
-    while(curr!=NULL) {
+    while(curr){
         upcoming = curr->next;
         curr->next = prev;
         prev = curr;
