@@ -3,7 +3,7 @@ public:
     int count(vector<int>& nums, int target,int n,vector<vector<int>> &dp,int i,int sum){
 
         if(target>sum || target < -sum) return 0;
-        
+
         if(i>=n) return target==0;
 
         if(dp[i][target+sum]!=-1) return dp[i][target+sum];
@@ -12,12 +12,23 @@ public:
     }
     int findTargetSumWays(vector<int>& nums, int target) {
         int n = nums.size();
-        int sum = 0;
+        int TotalSum = 0;
 
-        for(auto i:nums) sum+=i;
+        for(auto i:nums) TotalSum+=i;
 
-        vector<vector<int>> dp(n,vector<int>(2*sum+1,-1));
+        vector<vector<int>> dp(n,vector<int>(2*TotalSum+1,0));
+        dp[0][TotalSum+nums[0]] = 1;
+        dp[0][TotalSum-nums[0]] += 1;
 
-        return count(nums,target,n,dp,0,sum);
+        for(int i=1;i<n;i++){
+            for(int sum=-TotalSum;sum<=TotalSum;sum++){
+                if(dp[i-1][sum+TotalSum]>0){
+                    dp[i][sum+TotalSum+nums[i]] += dp[i-1][sum+TotalSum];
+                    dp[i][sum+TotalSum-nums[i]] += dp[i-1][sum+TotalSum];
+                }
+            }
+        }
+
+        return abs(target)>TotalSum ? 0: dp[n-1][target+TotalSum];
     }
 };
